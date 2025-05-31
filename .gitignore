@@ -1,0 +1,16 @@
+# Ignore node_modules everywhere
+**/node_modules
+
+# Ignore build / output folders (Vite, Next, etc.)
+**/.vite
+**/.next
+**/dist
+**/build
+
+# Ignore environment files (you’ll recreate these on each machine)
+*.env
+*.env.*
+
+# Mac, Windows, and Linux system files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,10 @@
+{
+  // Tell VSCode: “All TS/JS files under frontend/src/ use the frontend/tsconfig.json”
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["frontend/src/*"]
+    }
+  },
+  "include": ["frontend/src/**/*"]
+}
