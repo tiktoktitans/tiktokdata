@@ -14,3 +14,7 @@
 # Mac, Windows, and Linux system files
 .DS_Store
 Thumbs.db
+
+# Ignore any large raw JSON dumps
+raw_1613123321562117.json
+
