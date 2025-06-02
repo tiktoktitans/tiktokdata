@@ -223,14 +223,29 @@ async function enrichSingleProduct(productId: string) {
     }
 
     const priceObj = productBase.price ?? {};
+    let rawPrice = null;
+    
     if (
       priceObj.original_price !== undefined &&
       typeof priceObj.original_price === 'string' &&
       priceObj.original_price.trim() !== ''
     ) {
-      price = priceObj.original_price;
+      rawPrice = priceObj.original_price;
     } else if (priceObj.real_price !== undefined && priceObj.real_price !== null) {
-      price = priceObj.real_price;
+      rawPrice = priceObj.real_price;
+    }
+    
+    // Clean price: extract first numeric value from strings like "$89.99" or "$30.99 - 33.99"
+    if (rawPrice && typeof rawPrice === 'string') {
+      const priceMatch = rawPrice.match(/[\d.]+/);
+      if (priceMatch) {
+        const numericPrice = parseFloat(priceMatch[0]);
+        if (!isNaN(numericPrice)) {
+          price = numericPrice.toString();
+        }
+      }
+    } else if (typeof rawPrice === 'number') {
+      price = rawPrice.toString();
     }
 
     shop_name = sellerObj.name ?? null;
