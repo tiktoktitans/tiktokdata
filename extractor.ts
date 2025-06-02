@@ -99,7 +99,18 @@ export function extractVideos(pages: any[]): ParsedVideo[] {
       likes: v.statistics?.digg_count ?? 0,
       shares: v.statistics?.share_count ?? 0,
       comments: v.statistics?.comment_count ?? 0,
-      video_url: v.video?.play_addr?.url_list?.[0] ?? '',
+      video_url: (() => {
+        // Try to find the bit_rate: 0 entry for highest quality video
+        const bitRateData = v.video?.bit_rate;
+        if (Array.isArray(bitRateData)) {
+          const zeroBitRate = bitRateData.find((item: any) => item.bit_rate === 0);
+          if (zeroBitRate?.play_addr?.url_list?.[0]) {
+            return zeroBitRate.play_addr.url_list[0];
+          }
+        }
+        // Fallback to original method
+        return v.video?.play_addr?.url_list?.[0] ?? '';
+      })(),
       audio_url: v.video?.download_addr?.url_list?.[0] ?? '',
       thumbnail_url: v.video?.cover?.url_list?.[0] ?? '',
       video_duration,

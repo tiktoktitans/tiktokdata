@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.scraper
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - RAPIDAPI_KEY=${RAPIDAPI_KEY}
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
+
+  enricher:
+    build:
+      context: .
+      dockerfile: Dockerfile.enricher
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - RAPIDAPI_KEY=${RAPIDAPI_KEY}
+    restart: unless-stopped
+    depends_on:
+      - scraper
+
+  frontend:
+    build:
+      context: ./frontend-nextjs
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+    restart: unless-stopped

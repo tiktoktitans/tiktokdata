@@ -108,7 +108,7 @@ async function scrapeHashtag(
           {
             params,
             headers: {
-              'X-RapidAPI-Key': process.env.TOKAPI_KEY!,
+              'X-RapidAPI-Key': process.env.RAPIDAPI_KEY!,
               'X-RapidAPI-Host': 'tokapi-mobile-version.p.rapidapi.com',
             },
           }

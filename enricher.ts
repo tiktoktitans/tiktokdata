@@ -43,7 +43,7 @@ async function fetchProductDetailsWithRetry(productId: string) {
     try {
       const res = await axios.get(url, {
         headers: {
-          'X-RapidAPI-Key': process.env.TOKAPI_KEY!,
+          'X-RapidAPI-Key': process.env.RAPIDAPI_KEY!,
           'X-RapidAPI-Host': 'tokapi-mobile-version.p.rapidapi.com',
         },
       });
