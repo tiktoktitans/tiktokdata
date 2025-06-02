@@ -21,6 +21,7 @@ dotenv.config();
 const COUNT            = 20;    // Videos per page
 const RATE_LIMIT_DELAY = 500;   // ms between page requests
 const MAX_PAGES        = 1000;  // Safety cap on pages per hashtag
+const SCRAPE_INTERVAL  = 30 * 60 * 1000; // 30 minutes between scrape cycles
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper: sleep for `ms` milliseconds
@@ -233,17 +234,17 @@ async function scrapeHashtag(
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Main runner: 
+// Single scrape cycle: 
 //   1) Fetch hashtags
 //   2) Fetch blacklist
 //   3) Scrape each hashtag in turn
 // ─────────────────────────────────────────────────────────────────────────────
-async function run() {
-  console.log('🚀 TikTok scraper started (with blacklist)…\n');
+async function runScrapeCycle() {
+  console.log('🚀 Starting scrape cycle…\n');
 
   const hashtags = await fetchHashtagIDs();
   if (hashtags.length === 0) {
-    console.log('⛔ No hashtags to process. Exiting.');
+    console.log('⛔ No hashtags to process. Skipping cycle.');
     return;
   }
 
@@ -254,7 +255,27 @@ async function run() {
     await scrapeHashtag(id, tag, blacklist);
   }
 
-  console.log('\n✅ All hashtags processed.');
+  console.log('\n✅ Scrape cycle completed.');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main runner: Run scrape cycles continuously
+// ─────────────────────────────────────────────────────────────────────────────
+async function run() {
+  console.log('🚀 TikTok scraper started (continuous mode)…\n');
+  
+  while (true) {
+    try {
+      await runScrapeCycle();
+      
+      console.log(`⏰ Waiting ${SCRAPE_INTERVAL / 1000 / 60} minutes until next scrape cycle…\n`);
+      await sleep(SCRAPE_INTERVAL);
+    } catch (error) {
+      console.error('❌ Error in scrape cycle:', error);
+      console.log('⏰ Waiting 5 minutes before retrying…\n');
+      await sleep(5 * 60 * 1000); // Wait 5 minutes on error
+    }
+  }
 }
 
 run();
