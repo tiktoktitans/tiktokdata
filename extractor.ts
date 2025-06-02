@@ -11,7 +11,6 @@ type ParsedVideo = {
   shares: number;
   comments: number;
   video_url: string;
-  audio_url: string;
   thumbnail_url: string;
   video_duration: number | null;
   video_ratio: string;
@@ -111,7 +110,6 @@ export function extractVideos(pages: any[]): ParsedVideo[] {
         // Fallback to original method
         return v.video?.play_addr?.url_list?.[0] ?? '';
       })(),
-      audio_url: v.video?.download_addr?.url_list?.[0] ?? '',
       thumbnail_url: v.video?.cover?.url_list?.[0] ?? '',
       video_duration,
       video_ratio: ratio,

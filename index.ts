@@ -147,7 +147,6 @@ async function scrapeHashtag(
             shares:         v.shares,
             comments:       v.comments,
             video_url:      v.video_url,
-            audio_url:      v.audio_url,
             thumbnail_url:  v.thumbnail_url,
             video_duration: v.video_duration,
             video_ratio:    v.video_ratio,

@@ -109,6 +109,18 @@ async function enrichSingleProduct(productId: string) {
     shop_name     = existing.shop_name;
 
     console.log(`[Enricher] Cache hit for ${productId}. Updating shop_videos.`);
+
+    // Add to blacklisted_products to mark as "already processed"
+    const { error: blCacheErr } = await supabase
+      .from('blacklisted_products')
+      .insert({ product_id: productId });
+
+    if (blCacheErr) {
+      // Might already exist, that's ok
+      console.log(`[Enricher] Product ${productId} already in blacklisted_products (cache hit)`);
+    } else {
+      console.log(`[Enricher] Added ${productId} to blacklisted_products (cache hit).`);
+    }
   } else {
     // Cache MISS: attempt to call product API
     console.log(`[Enricher] Cache miss. Calling product-detail API for ${productId}`);
@@ -242,6 +254,18 @@ async function enrichSingleProduct(productId: string) {
     } else {
       console.log(`[Enricher] Cached metadata for ${productId} into shop_products.`);
     }
+
+    // 4b) Add to blacklisted_products to mark as "already processed"
+    const { error: blSuccessErr } = await supabase
+      .from('blacklisted_products')
+      .insert({ product_id: productId });
+
+    if (blSuccessErr) {
+      // Might already exist, that's ok
+      console.log(`[Enricher] Product ${productId} already in blacklisted_products (or insert failed)`);
+    } else {
+      console.log(`[Enricher] Added ${productId} to blacklisted_products (marked as processed).`);
+    }
   }
 
   // 5) Update all shop_videos rows for this product_id
@@ -309,10 +333,36 @@ async function runEnricher() {
       new Set(missingRows.map((r: any) => r.product_id as string))
     );
 
-    console.log(`[Enricher] Found ${uniqueProductIds.length} distinct product IDs to fill`);
+    // 2) Filter out product_ids that are already in blacklisted_products
+    const { data: blacklistedRows, error: blacklistErr } = await supabase
+      .from('blacklisted_products')
+      .select('product_id')
+      .in('product_id', uniqueProductIds);
 
-    // 2) Process each productId sequentially
-    for (const pid of uniqueProductIds) {
+    if (blacklistErr) {
+      console.error('[Enricher] Error querying blacklisted_products:', blacklistErr.message);
+      await sleep(5000);
+      continue;
+    }
+
+    const blacklistedIds = new Set(
+      (blacklistedRows || []).map((r: any) => r.product_id as string)
+    );
+
+    const unprocessedProductIds = uniqueProductIds.filter(
+      (pid) => !blacklistedIds.has(pid)
+    );
+
+    console.log(`[Enricher] Found ${uniqueProductIds.length} distinct product IDs, ${unprocessedProductIds.length} unprocessed`);
+
+    if (unprocessedProductIds.length === 0) {
+      console.log('[Enricher] All found product IDs are already processed. Sleeping for 30s…');
+      await sleep(30000);
+      continue;
+    }
+
+    // 3) Process each unprocessed productId sequentially
+    for (const pid of unprocessedProductIds) {
       await enrichSingleProduct(pid);
     }
 
