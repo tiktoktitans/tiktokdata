@@ -6,7 +6,13 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "scraper": "npx ts-node index.ts",
     "enricher": "npx ts-node enricher.ts",
-    "both": "concurrently \"npm run scraper\" \"npm run enricher\""
+    "enricher-parallel": "npx ts-node parallelEnricher.ts",
+    "handles": "npx ts-node handleScraper.ts",
+    "handles-parallel": "npx ts-node parallelHandleScraper.ts",
+    "import": "npx ts-node importCreators.ts",
+    "both": "concurrently \"npm run scraper\" \"npm run enricher\"",
+    "all": "concurrently \"npm run scraper\" \"npm run enricher\" \"npm run handles\"",
+    "all-parallel": "concurrently \"npm run scraper\" \"npm run enricher\" \"npm run handles-parallel\""
   },
   "keywords": [],
   "author": "",

@@ -110,7 +110,7 @@ export function extractVideos(pages: any[]): ParsedVideo[] {
         // Fallback to original method
         return v.video?.play_addr?.url_list?.[0] ?? '';
       })(),
-      thumbnail_url: v.video?.cover?.url_list?.[0] ?? '',
+      thumbnail_url: v.video?.ai_dynamic_cover?.url_list?.[2] ?? v.video?.cover?.url_list?.[0] ?? '',
       video_duration,
       video_ratio: ratio,
       share_url: v.share_info?.share_url ?? '',

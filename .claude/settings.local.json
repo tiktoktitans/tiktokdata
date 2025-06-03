@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tailwindcss init:*)",
+      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://ijzhnpizekdxgojpbwcg.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=https://ijzhnpizekdxgojpbwcg.supabase.co npm run dev)",
+      "Bash(curl:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(pkill:*)",
+      "Bash(NEXT_PUBLIC_SUPABASE_URL=https://ijzhnpizekdxgojpbwcg.supabase.co NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlqemhucGl6ZWtkeGdvanBid2NnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI1Njc2MzgsImV4cCI6MjA0ODE0MzYzOH0.xKGqQzLQdP7d5RiFnIk1L9EpAJKGcXvTJNjqPGV2vhs npm run dev)"
+    ],
+    "deny": []
+  }
+}

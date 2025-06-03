@@ -25,6 +25,19 @@ services:
     depends_on:
       - scraper
 
+  handle-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.scraper
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - RAPIDAPI_KEY=${RAPIDAPI_KEY}
+    command: npx ts-node handleScraper.ts
+    restart: unless-stopped
+    depends_on:
+      - scraper
+
   frontend:
     build:
       context: ./frontend-nextjs
